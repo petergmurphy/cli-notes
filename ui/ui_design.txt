@@ -1,0 +1,9 @@
+# Design Notes
+
+Awesome tool for whiteboarding: https://excalidraw.com/
+
+## Frame Sizing Dimensions
+
+- Note/write view: up to 60 characters
+
+- Sidebar view: 20, with remaining space for writing

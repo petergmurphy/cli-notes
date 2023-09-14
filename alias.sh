@@ -1,0 +1,2 @@
+alias notes="go run ."
+
