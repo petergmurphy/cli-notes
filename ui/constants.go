@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	singleViewBreakpoint = 60
-	sidebarWidith        = 20
+	singleViewBreakpoint = 100
+	sidebarWidth         = 40
 )
 
 var (
