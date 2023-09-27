@@ -29,10 +29,10 @@ func (m writeModel) Init() tea.Cmd {
 
 // View implements tea.Model.
 func (m writeModel) View() string {
-	titleTextbox := titleSelected.Render(m.textInput.View())
-	if m.mode != title {
-		titleTextbox = titleUnselected.Render(m.textInput.View())
-	}
+	titleTextbox := titleStyle.Width(m.width).Render(m.textInput.View())
+	// if m.mode != title {
+	// 	titleTextbox = titleUnselected.Render(m.textInput.View())
+	// }
 
 	bodyTextbox := m.textArea.View()
 	return lipgloss.JoinVertical(0, titleTextbox, bodyTextbox)
@@ -82,13 +82,17 @@ func CreateWriteModel() writeModel {
 	textInput := textinput.New()
 	textInput.CursorStart()
 	textInput.Placeholder = "Enter title..."
-	textInput.Prompt = "✍️  "
+	textInput.Prompt = "  📝  "
 	textInput.CharLimit = 40
 
 	textArea := textarea.New()
-	textArea.FocusedStyle.Base = textArea.FocusedStyle.Base.BorderForeground(lipgloss.Color("63"))
-	textArea.BlurredStyle.Base = textArea.FocusedStyle.Base.BorderForeground(lipgloss.Color("12"))
-	textArea.CharLimit = 0
+	// textArea.FocusedStyle.CursorLine = lipgloss.NewStyle().Background(lipgloss.Color("7"))
+	// textArea.ShowLineNumbers = false
+	// textArea.FocusedStyle.Base = textArea.FocusedStyle.Base.Border(lipgloss.Border{Top: "━"}, true, false, false, false)
+	// textArea.FocusedStyle.Base = textArea.FocusedStyle.Base.BorderStyle(borderStyle}).
+	// BorderForeground(lipgloss.Color("63"))
+	// textArea.BlurredStyle.Base = textArea.FocusedStyle.Base.BorderForeground(lipgloss.Color("12"))
+	textArea.CharLimit = 0 // Set so there is no limit to how many characters you can input
 
 	m := writeModel{
 		mode:      title,
@@ -102,9 +106,8 @@ func CreateWriteModel() writeModel {
 // Styles
 var (
 	bottomLeftBorder = lipgloss.RoundedBorder()
-	titleSelected    = lipgloss.NewStyle().
-				Border(lipgloss.RoundedBorder(), false, false, true, false).
-				BorderForeground(lipgloss.Color("63")).Width(45)
+	titleStyle       = lipgloss.NewStyle().
+				Border(lipgloss.Border{Bottom: "━", BottomLeft: "┣", Left: "┃"}, false, false, true, true)
 
 	titleUnselected = lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder(), false, false, true, false).

@@ -45,10 +45,14 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		// TODO: UPDATE WIDTH AND HEIGHT OF EACH COMPONENT HERE
 		m.windowWidth = msg.Width
+
+		m.writeModel.height = msg.Height
+		m.fileViewModel.height = msg.Height
 		if msg.Width > singleViewBreakpoint {
 			m.writeModel.width = msg.Width - sidebarWidth
 			m.fileViewModel.width = sidebarWidth
@@ -61,14 +65,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.fileViewModel.width = 0
 			}
 		}
-	case tea.KeyMsg:
-		if key.Matches(msg, ExitKeybinding) {
-			return m, tea.Quit
-		}
-	}
 
-	var cmd tea.Cmd
-	if m.state == write {
 		var newWriteModel tea.Model
 		newWriteModel, cmd = m.writeModel.Update(msg)
 		m.writeModel = newWriteModel.(writeModel)
@@ -77,8 +74,30 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			newNavModel, cmd = m.fileViewModel.Update(msg)
 			m.fileViewModel = newNavModel.(navModel)
 		}
+		return m, cmd
+	case tea.KeyMsg:
+		if key.Matches(msg, ExitKeybinding) {
+			return m, tea.Quit
+		}
+
+		if key.Matches(msg, SwitchModeKeyBinding) {
+			if m.state == write {
+				m.state = nav
+			} else {
+				m.state = write
+			}
+			return m, cmd
+		}
+	}
+
+	if m.state == write {
+		var newWriteModel tea.Model
+		newWriteModel, cmd = m.writeModel.Update(msg)
+		m.writeModel = newWriteModel.(writeModel)
 	} else if m.state == nav {
-		// TODO Add nav functionality
+		var newNavModel tea.Model
+		newNavModel, cmd = m.fileViewModel.Update(msg)
+		m.fileViewModel = newNavModel.(navModel)
 	}
 	return m, cmd
 }
